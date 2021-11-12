@@ -25,7 +25,6 @@ jobs:
           go mod tidy
           go get -u
           env GOOS=linux GOARCH=amd64 go build -o dist/datereminder_linux_amd64 .
-          env GOOS=windows GOARCH=amd64 go build -o dist/datereminder_win_amd64.exe .
 
       - name: Create release
         id: release

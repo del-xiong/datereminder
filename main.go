@@ -4,6 +4,7 @@ import (
 	"datereminder/config"
 	"datereminder/models"
 	"datereminder/src"
+	"flag"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
@@ -19,6 +20,13 @@ type notifymsg struct {
 }
 
 func init() {
+	flag.StringVar(&config.SMTP_SERVER, "smtp_server", "", "smtp服务器")
+	flag.StringVar(&config.SMTP_EMAIL, "smtp_user", "", "smtp邮件登录账号")
+	flag.StringVar(&config.SMTP_PWD, "smtp_pwd", "", "smtp邮件登录密码")
+	flag.StringVar(&config.SMTP_RECEIPT, "smtp_receipt", "", "邮件通知收件人")
+	flag.StringVar(&config.MysqlConnect, "mysql", "", "mysql登录信息 user:pwd@tcp(localhost)/datereminder")
+	flag.Parse()
+
 	Timeloc, _ := time.LoadLocation("PRC")
 	var err error
 	config.Engine, err = xorm.NewEngine("mysql", config.MysqlConnect)
@@ -34,7 +42,17 @@ func main() {
 
 	// 读取全部数据
 	tasks := make([]models.Task, 0)
-	config.Engine.Find(&tasks)
+	handlerErr(config.Engine.Find(&tasks))
+
+	if len(tasks) == 0 {
+		// 没有任何计划 直接报异常
+		src.NotifyMsg(
+			"查询数据库失败或无任何计划 datereminder",
+			"查询数据库失败或无任何计划 datereminder",
+		)
+		return
+	}
+
 	for _, v := range tasks {
 		year, _ := strconv.Atoi(time.Now().Format("2006"))
 		for _, d := range []string{fmt.Sprintf("%d-%s 00:00:00", year, v.ReminderDate), fmt.Sprintf("%d-%s 00:00:00", year+1, v.ReminderDate)} {
@@ -77,5 +95,11 @@ func main() {
 			fmt.Sprintf("【重要】%s(%d天)等%d个任务即将到期", msg[0].taskName, msg[0].expDay, len(msg)),
 			content,
 		)
+	}
+}
+
+func handlerErr(err error) {
+	if err != nil {
+		log.Output(2, err.Error())
 	}
 }

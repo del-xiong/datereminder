@@ -7,6 +7,24 @@
 
 - 用法:
    1. 导入task.sql到数据库
-   2. 修改config/param.go smtp登录信息、数据库链接信息 (基本不改动直接放代码了)
-   3. 添加提醒任务数据，task_name/task_desc任务名和描述。is_lunar 任务日期模式 默认0公历 1为农历。is_loop 是否循环提醒(暂时没有使用全部为循环提醒)。pre_day 提前多少天开始发送提醒通知。
-   4. 添加计划任务每日执行即可。
+   2. 添加提醒任务数据，task_name/task_desc任务名和描述。is_lunar 任务日期模式 默认0公历 1为农历。is_loop 是否循环提醒(暂时没有使用全部为循环提醒)。pre_day 提前多少天开始发送提醒通知。
+   3. 添加计划任务每日执行即可。
+
+- 启动执行参数说明
+```
+  -mysql string
+        mysql登录信息 user:pwd@tcp(localhost)/datereminder
+  -smtp_pwd string
+        smtp邮件登录密码
+  -smtp_receipt string
+        邮件通知收件人
+  -smtp_server string
+        smtp服务器
+  -smtp_user string
+        smtp邮件登录账号
+```
+
+- 启动执行示例
+```
+./datereminder  -smtp_server smtpdm.aliyun.com -smtp_user my@abc.com -smtp_pwd pass333 -smtp_receipt myqq@qq.com -mysql "user:pass@tcp(localhost)/datereminder"
+```

@@ -1,0 +1,39 @@
+name: datereminder_build
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - name: Build Prepare
+        run: |
+          echo "version=v$(grep "var Version string" main.go|grep -P '(\d{1,}\.\d{1,}\.\d{1,})' -o)" >> $GITHUB_ENV
+          echo "VERSION=$(TZ=UTC-8 date "+%Y%m%d%H%M%S")" >> $GITHUB_ENV
+          echo "DATE=$(TZ=UTC-8 date "+%Y-%m-%d %H:%M:%S")"  >> $GITHUB_ENV
+      - name: Build
+        run: |
+          mkdir ./dist
+          go get .\..
+          env GOOS=linux GOARCH=amd64 go build -o dist/datereminder_linux_amd64 .
+          env GOOS=windows GOARCH=amd64 go build -o dist/datereminder_win_amd64.exe .
+
+      - name: Create release
+        id: release
+        uses: ncipollo/release-action@v1
+        with:
+          name: datereminder 自动编译
+          allowUpdates: true
+          tag: datereminder_${{ env.version }}_${{ env.VERSION }}
+          commit: datereminder
+          token: ${{ secrets.BUILD_TOKEN_1 }}
+          body: "datereminder 自动编译发布"
+          artifacts: "./dist/*"

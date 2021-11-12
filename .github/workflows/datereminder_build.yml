@@ -22,7 +22,6 @@ jobs:
       - name: Build
         run: |
           mkdir ./dist
-          go mod tidy
           go get -u
           env GOOS=linux GOARCH=amd64 go build -o dist/datereminder_linux_amd64 .
 

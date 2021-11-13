@@ -26,15 +26,12 @@ jobs:
           go get -u
           env GOOS=linux GOARCH=amd64 go build -o dist/datereminder_linux_amd64 .
           echo datereminder_${{ env.version }}_${{ env.VERSION }}
-
-      - name: Create release
-        id: release
-        uses: ncipollo/release-action@v1
+      - name: upload release
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          name: datereminder 自动编译
-          allowUpdates: true
-          tag: datereminder_${{ env.version }}_${{ env.VERSION }}
-          commit: datereminder
-          token: ${{ secrets.BUILD_TOKEN_1 }}
-          body: "datereminder 自动编译发布"
-          artifacts: "./dist/*"
+          repo_token: "${{ secrets.BUILD_TOKEN_1 }}"
+          automatic_release_tag: datereminder_${{ env.version }}_${{ env.VERSION }}
+          prerelease: true
+          title: "datereminder 自动编译"
+          files: |
+            ./dist/*

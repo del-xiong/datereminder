@@ -13,7 +13,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: 1.17.3
       - name: Build Prepare
         run: |
           echo "version=v$(grep "var Version string" main.go|grep -P '(\d{1,}\.\d{1,}\.\d{1,})' -o)" >> $GITHUB_ENV
@@ -22,6 +22,7 @@ jobs:
       - name: Build
         run: |
           mkdir ./dist
+          export GOPROXY=https://goproxy.io
           go get -u
           env GOOS=linux GOARCH=amd64 go build -o dist/datereminder_linux_amd64 .
 

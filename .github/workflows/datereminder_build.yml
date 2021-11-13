@@ -13,7 +13,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: 1.17.3
       - name: Build Prepare
         run: |
           echo "version=v$(grep "var Version string" main.go|grep -P '(\d{1,}\.\d{1,}\.\d{1,})' -o)" >> $GITHUB_ENV
@@ -22,18 +22,16 @@ jobs:
       - name: Build
         run: |
           mkdir ./dist
-          go get .\..
+          export GOPROXY=https://goproxy.io
+          go get -u
           env GOOS=linux GOARCH=amd64 go build -o dist/datereminder_linux_amd64 .
           env GOOS=windows GOARCH=amd64 go build -o dist/datereminder_win_amd64.exe .
-
-      - name: Create release
-        id: release
-        uses: ncipollo/release-action@v1
+      - name: upload release
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          name: datereminder 自动编译
-          allowUpdates: true
-          tag: datereminder_${{ env.version }}_${{ env.VERSION }}
-          commit: datereminder
-          token: ${{ secrets.BUILD_TOKEN_1 }}
-          body: "datereminder 自动编译发布"
-          artifacts: "./dist/*"
+          repo_token: "${{ secrets.BUILD_TOKEN_1 }}"
+          automatic_release_tag: datereminder_${{ env.version }}_${{ env.VERSION }}
+          prerelease: false
+          title: "datereminder 自动编译 ${{env.DATE}}"
+          files: |
+            ./dist/*

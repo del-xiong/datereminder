@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+var Version string = "v1.0.3"
+
 type notifymsg struct {
 	taskName string
 	expDay   int

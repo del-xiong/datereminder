@@ -31,7 +31,7 @@ jobs:
         with:
           repo_token: "${{ secrets.BUILD_TOKEN_1 }}"
           automatic_release_tag: datereminder_${{ env.version }}_${{ env.VERSION }}
-          prerelease: true
+          prerelease: false
           title: "datereminder 自动编译"
           files: |
             ./dist/*

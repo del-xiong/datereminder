@@ -25,6 +25,7 @@ jobs:
           export GOPROXY=https://goproxy.io
           go get -u
           env GOOS=linux GOARCH=amd64 go build -o dist/datereminder_linux_amd64 .
+          echo datereminder_${{ env.version }}_${{ env.VERSION }}
 
       - name: Create release
         id: release

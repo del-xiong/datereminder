@@ -57,7 +57,8 @@ func main() {
 
 	for _, v := range tasks {
 		year, _ := strconv.Atoi(time.Now().Format("2006"))
-		for _, d := range []string{fmt.Sprintf("%d-%s 00:00:00", year, v.ReminderDate), fmt.Sprintf("%d-%s 00:00:00", year+1, v.ReminderDate)} {
+		for _, d := range []string{fmt.Sprintf("%d-%s 00:00:00", year, v.ReminderDate), fmt.Sprintf("%d-%s 00:00:00", year+1, v.ReminderDate), fmt.Sprintf("%d-%s 00:00:00", year-1, v.ReminderDate)} {
+
 			dayExp, dateExp, err := src.CheckDate(v, d)
 			if err != nil {
 				src.NotifyMsg(
